@@ -10,7 +10,7 @@ CREATE TABLE `danmu` (
 	`locate` INT(11) NULL COMMENT '弹幕坐标',
 	`direc` INT(10) NULL COMMENT '弹幕方向',
 	`style` INT(10) NULL COMMENT '弹幕样式',
-	`danmu_id` INT(12) NULL DEFAULT NULL COMMENT '弹幕id',
+	`danmu_id` INT(15) NULL DEFAULT NULL COMMENT '弹幕id',
 	`content` VARCHAR(5000) NULL COMMENT '弹幕内容',
 	PRIMARY KEY (`id`)
 )
