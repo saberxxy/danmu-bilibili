@@ -1,6 +1,6 @@
 ﻿--建表SQL语句
 CREATE TABLE `danmu` (
-	`id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+	`id` BIGINT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT '主键',
 	`av_id` INT(12) NULL COMMENT 'av号',
 	`av_title` VARCHAR(1000) NULL DEFAULT '0' COMMENT 'av标题',
 	`color` VARCHAR(100) NULL COMMENT '弹幕颜色',
@@ -15,5 +15,21 @@ CREATE TABLE `danmu` (
 	PRIMARY KEY (`id`)
 )
 COMMENT='全部弹幕内容'
+DEFAULT CHARSET='utf8'
+ENGINE=InnoDB
+
+
+create table bilibili_user
+(`id` BIGINT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT '主键',
+`uid` INT(20) NULL COMMENT '用户id',
+`username` varchar(20) NULL COMMENT '用户名',
+`regdate` datetime NULL COMMENT '注册日期',
+`birthday` varchar(10) NULL COMMENT '生日',
+`geo` varchar(20) NULL COMMENT '地区',
+`videonumber` FLOAT NULL COMMENT '投稿视频数',
+`gznumber` FLOAT NULL COMMENT '关注数',
+`fansnumber` FLOAT NULL COMMENT '粉丝数',
+`bfnumber` FLOAT NULL COMMENT '播放数')
+COMMENT='用户信息'
 DEFAULT CHARSET='utf8'
 ENGINE=InnoDB
