@@ -46,3 +46,34 @@ create sequence danmu_seq increment by 1 start with 1
 minvalue 1 maxvalue 9999999999999 nocache 
 order;
 
+
+--用户信息表
+create table bilibili_user
+(id number(20) PRIMARY KEY,
+userid number(20),
+username varchar2(20),
+regdate DATE,
+birthday varchar2(10),
+geo varchar2(50),
+videonumber number(20, 2),
+gznumber number(20, 2),
+fansnumber number(20, 2),
+bfnumber number(20, 2)
+);
+comment on table bilibili_user is '用户信息表';
+comment on column bilibili_user.id is '主键';
+comment on column bilibili_user.userid is '用户id';
+comment on column bilibili_user.username is '用户名';
+comment on column bilibili_user.regdate is '注册日期';
+comment on column bilibili_user.birthday is '生日';
+comment on column bilibili_user.geo is '地区';
+comment on column bilibili_user.videonumber is '投稿视频数';
+comment on column bilibili_user.gznumber is '关注数';
+comment on column bilibili_user.fansnumber is '粉丝数';
+comment on column bilibili_user.bfnumber is '播放数';
+
+--自增序列
+create sequence user_seq increment by 1 start with 1 
+minvalue 1 maxvalue 9999999999999 nocache 
+order;
+
