@@ -161,10 +161,10 @@ def getMaxUid():
 def main():
     start = getMaxUid()
     if start == None:  # 第一次抓取，指定uid
-        start = 1
+        start = 0
     print ("user start: ", start)
     stop = int(input("user stop: "))
-    getSoup(start, stop)
+    getSoup(start+1, stop)
 
     # print(soup)
 

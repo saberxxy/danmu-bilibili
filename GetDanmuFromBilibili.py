@@ -12,13 +12,12 @@ import pymysql
 from bs4 import BeautifulSoup
 import socket
 
-socket.setdefaulttimeout(5)
+socket.setdefaulttimeout(20)
 
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET
-
 
 mysql_host = "localhost"
 mysql_port = 3306
@@ -26,29 +25,6 @@ mysql_user = "root"
 mysql_pwd = "root"
 mysql_db = "test"  #数据库名
 mysql_tb = "danmu"  #表名
-
-"""
-建表SQL语句：
-CREATE TABLE `danmu` (
-	`id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-	`av_id` INT(12) NULL COMMENT 'av号',
-	`av_title` VARCHAR(1000) NULL DEFAULT '0' COMMENT 'av标题',
-	`color` VARCHAR(100) NULL COMMENT '弹幕颜色',
-	`post_time` DATETIME NULL COMMENT '弹幕发送时间',
-	`show_time` FLOAT NULL COMMENT '弹幕显示时间',
-	`font_size` INT(10) NULL COMMENT '字号',
-	`locate` INT(11) NULL COMMENT '弹幕坐标',
-	`direc` INT(10) NULL COMMENT '弹幕方向',
-	`style` INT(10) NULL COMMENT '弹幕样式',
-	`danmu_id` INT(12) NULL DEFAULT NULL COMMENT '弹幕id',
-	`content` VARCHAR(5000) NULL COMMENT '弹幕内容',
-	PRIMARY KEY (`id`)
-)
-COMMENT='全部弹幕内容'
-DEFAULT CHARSET='utf8'
-ENGINE=InnoDB
-
-"""
 
 # 得到最大的id
 def getMaxId():
@@ -96,9 +72,12 @@ def saveData(cmd, data):
 
 # 处理gzip压缩后的网页
 def gzipDecode(zipData):
-    buf = BytesIO(zipData)
-    http_page = gzip.GzipFile(fileobj=buf).read()
-    return http_page.decode("utf-8")
+    try:
+        buf = BytesIO(zipData)
+        http_page = gzip.GzipFile(fileobj=buf).read()
+        return http_page.decode("utf-8")
+    except Exception:
+        pass
 
 
 # 获取链接
@@ -114,10 +93,13 @@ def getUrl(url):
 # 解决分P问题,拿到分P或不分P的所有cid和标题
 def fetchCidsFromHtml(avid):
     def getCid(url):
-        http_page = getUrl(url)
-        cid = re.findall(r"cid=(\d+)", http_page)
-        cid = cid and cid[0] or ""
-        return cid
+        try:
+            http_page = getUrl(url)
+            cid = re.findall(r"cid=(\d+)", http_page)
+            cid = cid and cid[0] or ""
+            return cid
+        except Exception:
+            pass
 
     url = "http://www.bilibili.com/video/av%s/" % str(avid)
     http_page = getUrl(url)
@@ -143,42 +125,51 @@ def fetchCidsFromHtml(avid):
 def getDanmu(cid):
     if not cid:
         return "未找到弹幕"
-    cid_url = "http://comment.bilibili.com/%s.xml" % cid
-    danmu_xml = urllib.request.urlopen(cid_url).read()
-    xml = zlib.decompressobj(-zlib.MAX_WBITS).decompress(danmu_xml).decode()  # 返回解压后的数据
+    try:
+        cid_url = "http://comment.bilibili.com/%s.xml" % cid
+        danmu_xml = urllib.request.urlopen(cid_url).read()
+        xml = zlib.decompressobj(-zlib.MAX_WBITS).decompress(danmu_xml).decode()  # 返回解压后的数据
 
-    return xml  # 删除换行符
+        return xml  # 删除换行符
+    except Exception:
+        pass
 
 
 
 # 根据xml格式的字符串提取数据并格式化
 def formatData(av_id, av_title, xml_str):
-    xml_str = re.sub(u"[\x00-\x08\x0b-\x0c\x0e-\x1f]+", u"", xml_str)
+    try:
+        xml_str = re.sub(u"[\x00-\x08\x0b-\x0c\x0e-\x1f]+", u"", xml_str)
 
-    root = ET.fromstring(xml_str)
-    data = []
-    cmd = """insert into test.danmu (show_time, direc, font_size, locate, post_time, style, color, danmu_id, content, av_id, av_title) values (%s,%s,%s,%s,'%s',%s,'%s',%s,'%s',%s,'%s');"""
-    for item in root.findall("d"):
-        p = item.get("p").split(",")
-        content = item.text and pymysql.escape_string(item.text) or ""
-        p.append(content)
-        p.append(str(av_id))
-        p.append(pymysql.escape_string(av_title))
-        p[4] = datetime.utcfromtimestamp(int(p[4]))
-        data.append(tuple(p))
-    return cmd, data
+        root = ET.fromstring(xml_str)
+        data = []
+        cmd = """insert into test.danmu (show_time, direc, font_size, locate, post_time, style, color, danmu_id, content, av_id, av_title) values (%s,%s,%s,%s,'%s',%s,'%s',%s,'%s',%s,'%s');"""
+        for item in root.findall("d"):
+            p = item.get("p").split(",")
+            content = item.text and pymysql.escape_string(item.text) or ""
+            p.append(content)
+            p.append(str(av_id))
+            p.append(pymysql.escape_string(av_title))
+            p[4] = datetime.utcfromtimestamp(int(p[4]))
+            data.append(tuple(p))
+        return cmd, data
+    except Exception:
+        pass
 
 
 # 保存弹幕
 def saveDanmu(av_id):
-    for item in fetchCidsFromHtml(av_id):
-        xml_data = getDanmu(item.get("cid"))
-        if xml_data == "未找到弹幕":
-            continue
-        cmd, data = formatData(av_id, item.get("title"), xml_data)
+    try:
+        for item in fetchCidsFromHtml(av_id):
+            xml_data = getDanmu(item.get("cid"))
+            if xml_data == "未找到弹幕":
+                continue
+            cmd, data = formatData(av_id, item.get("title"), xml_data)
 
-        saveData(cmd, data)
-        print (av_id, getMaxId())
+            saveData(cmd, data)
+            print (av_id, getMaxId())
+    except Exception:
+        pass
 
 
 # 迭代抓取并写入文件
@@ -203,7 +194,7 @@ def camouflageBrowser(url):
         content = urllib.request.urlopen(url).read()
         return content
     except Exception:
-        return ""
+        pass
 
 
 # 分P视频抓取测试
@@ -230,7 +221,7 @@ def main():
     print ("av start: ", start)
     stop = int(input("av stop: "))
 
-    for i in range(start, stop+1):
+    for i in range(start+1, stop+1):
         saveDanmu(i)
     stopTime = time.clock()
     print ((stopTime - startTime)/60,)
