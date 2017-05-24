@@ -1,0 +1,3 @@
+phantomjs
+Oracle
+MySQL（目前的版本中需要，未来会迁移到Oracle中）
