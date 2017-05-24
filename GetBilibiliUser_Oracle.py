@@ -34,6 +34,7 @@ def getSoup(start, stop):
             dcap["phantomjs.page.settings.userAgent"] = (
                 "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0"
             )
+            dcap["phantomjs.page.settings.loadImages"] = False  #不加载图片，加快速度
             # phantomjs.exe的路径G:\Anaconda3\phantomjs\bin
             driver = webdriver.PhantomJS(executable_path='G:\\Anaconda3\\phantomjs\\bin\\phantomjs.exe',
                                          desired_capabilities=dcap)
@@ -141,8 +142,8 @@ def saveData(uid, username, regdate, birthday, geo, truevideonumber, truegznumbe
     try:
         cur = conn.cursor()
         cur.execute("insert into bilibili_user(id ,userid, username, regdate, birthday, geo, videonumber, gznumber, fansnumber, bfnumber)"
-                        "values(user_seq.Nextval, '%d', '%s', to_date('%s', 'yyyy-MM-dd'), '%s', '%s', '%f', '%f', '%f', '%f')"
-                        % (uid, username, regdate, birthday, geo, truevideonumber, truegznumber, truefansnumber, truebfnumber))
+                    "values(user_seq.Nextval, '%d', '%s', to_date('%s', 'yyyy-MM-dd'), '%s', '%s', '%f', '%f', '%f', '%f')"
+                    % (uid, username, regdate, birthday, geo, truevideonumber, truegznumber, truefansnumber, truebfnumber))
         cur.execute("commit")
             # print('-------已插入数据库--------')
         print(uid)
@@ -166,8 +167,6 @@ def main():
     getSoup(start+1, stop)
 
     # print(soup)
-
-
 
 
 if __name__=='__main__':
