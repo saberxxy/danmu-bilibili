@@ -11,6 +11,8 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import re
 import cx_Oracle as cxo
+from wxpy import *
+
 
 oracleHost = '127.0.0.1'
 oraclePort = '1521'
@@ -148,6 +150,12 @@ def saveData(uid, username, regdate, birthday, geo, truevideonumber, truegznumbe
             # print('-------已插入数据库--------')
         print(uid)
         cur.close()
+
+        if uid%100 == 0:
+            msg = '已抓取并导入'+str(uid)+'条用户信息'
+            sendMessage('Clannad', msg)
+            print(msg)
+
     except Exception:
         pass
 
@@ -155,6 +163,15 @@ def saveData(uid, username, regdate, birthday, geo, truevideonumber, truegznumbe
 def getMaxUid():
     cursor.execute('select max(userid) from bilibili_user')
     return cursor.fetchone()[0]
+
+
+def sendMessage(replay_user, replay_content):
+    bot = Bot(cache_path=True)  #设置登录缓存，不必每次运行都扫码
+
+    # replay_user = u''  # 在这里写要回复的人
+    # replay_content = u''  # 在这里写要回复的内容
+    my_friend = ensure_one(bot.search(replay_user))
+    my_friend.send(replay_content)
 
 
 def main():
@@ -167,6 +184,7 @@ def main():
     getSoup(start+1, stop)
 
     # print(soup)
+
 
 
 if __name__=='__main__':

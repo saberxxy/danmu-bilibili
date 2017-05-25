@@ -14,6 +14,8 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium import webdriver
 import re
 import cx_Oracle as cxo
+from wxpy import *
+
 
 oracleHost = '127.0.0.1'
 oraclePort = '1521'
@@ -173,6 +175,12 @@ def saveData(avid, userid, title, uptime, truedjnumber, truedmnumber, truecoinnu
         # print('-------已插入数据库--------')
         print(avid)
         cur.close()
+
+        if avid%100 == 0:
+            msg = '已抓取并导入'+str(avid)+'条视频信息'
+            sendMessage('Clannad', msg)
+            print(msg)
+
     except Exception:
         pass
 
@@ -181,6 +189,15 @@ def saveData(avid, userid, title, uptime, truedjnumber, truedmnumber, truecoinnu
 def getMaxUid():
     cursor.execute('select max(av_id) from bilibili_video')
     return cursor.fetchone()[0]
+
+
+def sendMessage(replay_user, replay_content):
+    bot = Bot(cache_path=True)  #设置登录缓存，不必每次运行都扫码
+
+    # replay_user = u''  # 在这里写要回复的人
+    # replay_content = u''  # 在这里写要回复的内容
+    my_friend = ensure_one(bot.search(replay_user))
+    my_friend.send(replay_content)
 
 
 def main():
