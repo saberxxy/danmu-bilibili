@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import re
 import cx_Oracle as cxo
-from wxpy import *
+import SendMessage
 
 
 oracleHost = '127.0.0.1'
@@ -22,7 +22,7 @@ oracleDatabaseName = 'orcl'
 oracleConn = oracleUser + '/' + oraclePassword + '@' + oracleHost + '/' + oracleDatabaseName
 conn = cxo.connect(oracleConn)
 cursor = conn.cursor()
-bot = Bot(cache_path=True)  #设置登录缓存，不必每次运行都扫码
+
 
 
 # 获取网页数据
@@ -154,7 +154,7 @@ def saveData(uid, username, regdate, birthday, geo, truevideonumber, truegznumbe
 
         if uid%100 == 0:
             msg = '已抓取并导入'+str(uid)+'条用户信息'
-            sendMessage('Clannad', msg)
+            SendMessage.sendMessage('东京中央软体产业株式会社', msg)
             print(msg)
 
     except Exception:
@@ -165,13 +165,6 @@ def getMaxUid():
     cursor.execute('select max(userid) from bilibili_user')
     return cursor.fetchone()[0]
 
-
-def sendMessage(replay_user, replay_content):
-
-    # replay_user = u''  # 在这里写要回复的人
-    # replay_content = u''  # 在这里写要回复的内容
-    my_friend = ensure_one(bot.search(replay_user))
-    my_friend.send(replay_content)
 
 
 def main():

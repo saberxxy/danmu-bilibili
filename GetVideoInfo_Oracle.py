@@ -14,7 +14,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium import webdriver
 import re
 import cx_Oracle as cxo
-from wxpy import *
+import SendMessage
 
 
 oracleHost = '127.0.0.1'
@@ -25,7 +25,7 @@ oracleDatabaseName = 'orcl'
 oracleConn = oracleUser + '/' + oraclePassword + '@' + oracleHost + '/' + oracleDatabaseName
 conn = cxo.connect(oracleConn)
 cursor = conn.cursor()
-bot = Bot(cache_path=True)  #设置登录缓存，不必每次运行都扫码
+# bot = Bot(cache_path=True)  #设置登录缓存，不必每次运行都扫码
 
 
 # 获取网页数据
@@ -180,7 +180,8 @@ def saveData(avid, userid, title, uptime, truedjnumber, truedmnumber, truecoinnu
 
         if avid%100 == 0:
             msg = '已抓取并导入'+str(avid)+'条视频信息'
-            sendMessage('Clannad', msg)
+            SendMessage.sendMessage('东京中央软体产业株式会社', msg)
+            # sendMessage('东京中央软体产业株式会社', msg)
             print(msg)
 
     except Exception:
@@ -193,14 +194,6 @@ def getMaxUid():
     return cursor.fetchone()[0]
 
 
-def sendMessage(replay_user, replay_content):
-
-    # replay_user = u''  # 在这里写要回复的人
-    # replay_content = u''  # 在这里写要回复的内容
-    my_friend = ensure_one(bot.search(replay_user))
-    my_friend.send(replay_content)
-
-
 def main():
     start = getMaxUid()
     if start == None:  # 第一次抓取，指定uid
@@ -209,6 +202,7 @@ def main():
     print ("user start: ", start)
     stop = int(input("user stop: "))
     getSoup(start+1, stop)
+
 
     # print(soup)
 
