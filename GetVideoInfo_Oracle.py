@@ -25,6 +25,8 @@ oracleDatabaseName = 'orcl'
 oracleConn = oracleUser + '/' + oraclePassword + '@' + oracleHost + '/' + oracleDatabaseName
 conn = cxo.connect(oracleConn)
 cursor = conn.cursor()
+bot = Bot(cache_path=True)  #设置登录缓存，不必每次运行都扫码
+
 
 # 获取网页数据
 def getSoup(start, stop):
@@ -192,7 +194,6 @@ def getMaxUid():
 
 
 def sendMessage(replay_user, replay_content):
-    bot = Bot(cache_path=True)  #设置登录缓存，不必每次运行都扫码
 
     # replay_user = u''  # 在这里写要回复的人
     # replay_content = u''  # 在这里写要回复的内容
