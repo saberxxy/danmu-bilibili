@@ -1,5 +1,7 @@
 # danmu-bilibili
 
+branch author : zhang
+
 
 1、数据采集
 （1）使用爬虫抓取弹幕、视频信息、用户信息、用户关注、用户粉丝
