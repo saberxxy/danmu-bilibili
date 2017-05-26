@@ -29,7 +29,8 @@ create table bilibili_user
 `videonumber` FLOAT NULL COMMENT '投稿视频数',
 `gznumber` FLOAT NULL COMMENT '关注数',
 `fansnumber` FLOAT NULL COMMENT '粉丝数',
-`bfnumber` FLOAT NULL COMMENT '播放数')
+`bfnumber` FLOAT NULL COMMENT '播放数'
+)
 COMMENT='用户信息'
 DEFAULT CHARSET='utf8'
 ENGINE=InnoDB
