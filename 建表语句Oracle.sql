@@ -11,6 +11,11 @@ grant connect to bilibili;
 grant resource to bilibili;
 grant create table to bilibili;
 
+
+--所需的表
+--弹幕表，用户信息表，视频信息表，评论表，用户投稿表，用户粉丝表，用户关注表
+
+
 --bilibili
 --弹幕表
 CREATE TABLE bilibili_danmu (
