@@ -45,6 +45,7 @@ def getSoup(start, stop):
             # time.sleep(1)  # 更据动态网页加载耗时自定义
             content = driver.page_source  # 获取网页内容
             driver.close()
+            driver.quit()
             soup = BeautifulSoup(content, 'lxml')
             getInfo(soup)
     except Exception:
@@ -199,7 +200,8 @@ def main():
     if start == None:  # 第一次抓取，指定uid
         start = 0
     print ("user start: ", start)
-    stop = int(input("user stop: "))
+    stop = 100000
+        # int(input("user stop: "))
     getSoup(start+1, stop)
 
 
