@@ -178,11 +178,11 @@ def saveData(avid, userid, title, uptime, truedjnumber, truedmnumber, truecoinnu
         print(avid)
         cur.close()
 
-        if avid%100 == 0:
-            msg = '已抓取并导入'+str(avid)+'条视频信息'
-            SendMessage.sendMessage('东京中央软体产业株式会社', msg)
-            # sendMessage('东京中央软体产业株式会社', msg)
-            print(msg)
+        # if avid%100 == 0:
+        #     msg = '已抓取并导入'+str(avid)+'条视频信息'
+        #     SendMessage.sendMessage('东京中央软体产业株式会社', msg)
+        #     # sendMessage('东京中央软体产业株式会社', msg)
+        #     print(msg)
 
     except Exception:
         pass
@@ -198,7 +198,6 @@ def main():
     start = getMaxUid()
     if start == None:  # 第一次抓取，指定uid
         start = 0
-    print(start)
     print ("user start: ", start)
     stop = int(input("user stop: "))
     getSoup(start+1, stop)

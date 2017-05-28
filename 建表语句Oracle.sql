@@ -20,17 +20,17 @@ grant create table to bilibili;
 --弹幕表
 CREATE TABLE bilibili_danmu (
 	id number(20) primary key,
-	av_id number(12),
+	av_id number(20),
 	av_title VARCHAR2(1000),
 	color VARCHAR2(100),
 	post_time DATE,
-	show_time number(20),
-	font_size number(10),
-	locate number(11),
-	direc number(10),
-	style number(10),
-	danmu_id number(15),
-	content VARCHAR2(3000)
+	show_time number(20, 4),
+	font_size number(20, 4),
+	locate number(20, 4),
+	direc number(20, 4),
+	style number(20, 4),
+	danmu_id number(20, 4),
+	content VARCHAR2(4000)
 );
 comment on table bilibili_danmu is '弹幕内容表';
 comment on column bilibili_danmu.id is '主键';
