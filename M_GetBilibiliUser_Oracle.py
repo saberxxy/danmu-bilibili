@@ -14,6 +14,7 @@ import cx_Oracle as cxo
 import SendMessage
 from multiprocessing import Pool
 import time
+import random
 
 
 oracleHost = '127.0.0.1'
@@ -155,7 +156,7 @@ def main(number):
     driver = webdriver.PhantomJS(executable_path='G:\\Anaconda3\\phantomjs\\bin\\phantomjs.exe',
                                  desired_capabilities=dcap)
     driver.get(url)
-    # time.sleep(0.5)  # 更据动态网页加载耗时自定义
+    time.sleep(random.uniform(1, 5))  # 更据动态网页加载耗时，此处为随机时间
     content = driver.page_source  # 获取网页内容
     # print(content)
     # driver.close()
@@ -183,6 +184,7 @@ if __name__=='__main__':
 
     time2 = time.time()
     print((time2 - time1) / 60, u"分钟")
+
 
 
 
