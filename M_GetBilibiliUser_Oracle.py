@@ -155,20 +155,22 @@ def main(number):
     # phantomjs.exe的路径G:\Anaconda3\phantomjs\bin
     driver = webdriver.PhantomJS(executable_path='G:\\Anaconda3\\phantomjs\\bin\\phantomjs.exe',
                                  desired_capabilities=dcap)
-    driver.get(url)
-    time.sleep(random.uniform(1, 5))  # 更据动态网页加载耗时，此处为随机时间
-    content = driver.page_source  # 获取网页内容
-    # print(content)
-    # driver.close()
-    driver.close()
-    driver.quit()  # 仅仅close不能解决问题，要使用quit，避免因phantomjs造成内存泄露
-    soup = BeautifulSoup(content, 'lxml')
     try:
+        driver.get(url)
+        time.sleep(random.uniform(1, 5))  # 更据动态网页加载耗时，此处为随机时间
+        content = driver.page_source  # 获取网页内容
+        # print(content)
+        # driver.close()
+        driver.close()
+        driver.quit()  # 仅仅close不能解决问题，要使用quit，避免因phantomjs造成内存泄露
+        soup = BeautifulSoup(content, 'lxml')
         getInfo(soup)
         # print(int(soup.find_all(attrs={'class': 'item uid'})[0].find_all(attrs={'class': 'text'})[0].contents[0]))
     except Exception:
         pass
-
+    finally:
+        if driver:
+            driver.quit()
 
 
 
@@ -179,8 +181,11 @@ if __name__=='__main__':
     stop = start + 10000
     print(start, stop)
 
-    pool = Pool(processes=16)  # 设定并发进程的数量
-    pool.map(main, (i for i in range(start, stop+1)))
+    try:
+        pool = Pool(processes=16)  # 设定并发进程的数量
+        pool.map(main, (i for i in range(start, stop+1)))
+    except Exception:
+        pass
 
     time2 = time.time()
     print((time2 - time1) / 60, u"分钟")
