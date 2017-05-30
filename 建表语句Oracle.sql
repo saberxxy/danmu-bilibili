@@ -147,3 +147,45 @@ comment on column bilibili_comment.content is '评论内容';
 create sequence comment_seq increment by 1 start with 1 
 minvalue 1 maxvalue 9999999999999 nocache 
 order;
+
+
+--粉丝表
+create table bilibili_userfans
+(id number(20) PRIMARY KEY,
+userid number(20),
+username varchar2(50),
+fansnumber number(20),
+fansuserid varchar2(4000));
+
+comment on table bilibili_userfans is '粉丝表';
+comment on column bilibili_userfans.id is '主键';
+comment on column bilibili_userfans.userid is '用户id';
+comment on column bilibili_userfans.username is '用户名';
+comment on column bilibili_userfans.fansnumber is '粉丝数量';
+comment on column bilibili_userfans.fansuserid is '粉丝用户id';
+
+--自增序列
+create sequence userfans_seq increment by 1 start with 1 
+minvalue 1 maxvalue 9999999999999 nocache 
+order;
+
+
+--关注表
+create table bilibili_usergz
+(id number(20) PRIMARY KEY,
+userid number(20),
+username varchar2(50),
+gznumber number(20),
+gzsuserid varchar2(4000));
+
+comment on table bilibili_usergz is '关注表';
+comment on column bilibili_usergz.id is '主键';
+comment on column bilibili_usergz.userid is '用户id';
+comment on column bilibili_usergz.username is '用户名';
+comment on column bilibili_usergz.gznumber is '关注数量';
+comment on column bilibili_usergz.gzsuserid is '关注用户id';
+
+--自增序列
+create sequence usergz_seq increment by 1 start with 1 
+minvalue 1 maxvalue 9999999999999 nocache 
+order;
