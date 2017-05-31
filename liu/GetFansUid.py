@@ -71,7 +71,7 @@ class GetFansUid(object):
         except Exception:
             print(" get uid error")
         finally:
-            return self._fans_ids, float(fansnumber)
+            return self._fans_ids, fansnumber
 
 
 # def main():

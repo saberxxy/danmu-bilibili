@@ -47,10 +47,10 @@ def getSoup(start, stop):
             uid = number # number即为uid
 
             get_fans_uid = GetFansUid.GetFansUid(number)
-            fansid, fansnumber = get_fans_uid.get_uids()  # 获取粉丝id和粉丝数量
+            fansuid, fansnumber = get_fans_uid.get_uids()  # 获取粉丝id和粉丝数量
             print(uid, username, fansnumber)
 
-            saveData(uid, username, fansnumber, fansid)# 插入数据库
+            saveData(uid, username, fansnumber, fansuid)# 插入数据库
     except Exception:
         print("get page error")
         return getSoup(number + 1, stop+1)
@@ -70,15 +70,15 @@ def getInfo(soup):
 
 
 # 存入数据库
-def saveData(uid, username, fansnumber, fansid):
+def saveData(uid, username, fansnumber, fansuserid):
 
     try:
-        cur.execute("insert into bilibili_fansid(id ,userid, username, fansnumber, fansid)"
-                    "values(fansid_seq.Nextval, '%d', '%s', '%f', '%s')"
-                    % (uid, username, fansnumber, fansid))
+        cur.execute("insert into bilibili_userfans(id ,userid, username, fansnumber, fansuserid)"
+                    "values(userfans_seq.Nextval, '%d', '%s', '%f', '%s')"
+                    % (uid, username, fansnumber, fansuserid))
         cur.execute("commit")
         print('插入数据库:', username)
-        # cur.execute("select username, fansnumber from bilibili_fansid order by id DESC")
+        # cur.execute("select username, fansnumber from bilibili_userfans order by id DESC")
         # fan = cur.fetchone()
         # print(fan[0])
     except Exception:
@@ -87,13 +87,13 @@ def saveData(uid, username, fansnumber, fansid):
 
 # 得到最大的uid
 def getMaxUid():
-    cur.execute('select max(userid) from bilibili_user')
+    cur.execute('select max(userid) from bilibili_userfans')
     return cur.fetchone()[0]
 
 
 def main():
     try:
-        getSoup(122900, 122979)
+        getSoup(122910, 122979)
     finally:
         cur.close()
         conn.close()
