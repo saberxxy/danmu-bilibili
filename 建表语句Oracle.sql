@@ -122,7 +122,6 @@ minvalue 1 maxvalue 9999999999999 nocache
 order;
 
 
---评论表
 create table bilibili_comment
 (id number(20) PRIMARY KEY,
 rpid number(20),
@@ -130,6 +129,9 @@ av_id number(12),
 userid number(20),
 username varchar2(20),
 uptime date,
+likenumber number(10),
+floor number(10),
+parent number(20), 
 content varchar2(1000)
 );
 comment on table bilibili_comment is '评论表';
@@ -139,8 +141,10 @@ comment on column bilibili_comment.av_id is 'av号';
 comment on column bilibili_comment.userid is '用户id';
 comment on column bilibili_comment.username is '用户名';
 comment on column bilibili_comment.uptime is '发布时间';
+comment on column bilibili_comment.likenumber is '点赞数';
+comment on column bilibili_comment.floor is '楼层';
+comment on column bilibili_comment.parent is '父节点rpid';
 comment on column bilibili_comment.content is '评论内容';
-
 
 --自增序列
 create sequence comment_seq increment by 1 start with 1 
