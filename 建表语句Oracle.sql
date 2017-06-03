@@ -84,21 +84,25 @@ order;
 
 
 --视频信息表
+--av号，up主userid，视频标题，发布时间，大分类，小分类，标签，
+--视频描述，点击数，弹幕数，硬币数，收藏数，分享数，评论数，最高日排名
 create table bilibili_video
 (id number(20) PRIMARY KEY,
 av_id number(12),
 userid number(20),
 av_title varchar2(1000),
 uptime date,
+bigtype varchar2(100),
+smalltype varchar2(100),
+tags varchar2(1000),
+description varchar2(2000),
 djnumber number(20, 2),
 dmnumber number(20, 2),
 coinnumber number(20, 2),
 scnumber number(20, 2),
-bigtype varchar2(100),
-smalltype varchar2(100),
 sharenumber number(20, 2),
-tags varchar2(1000),
-description varchar2(2000)
+commentnumber number(20, 2),
+hisrank number(10)
 );
 comment on table bilibili_video is '视频信息表';
 comment on column bilibili_video.id is '主键';
@@ -106,15 +110,18 @@ comment on column bilibili_video.av_id is 'av号';
 comment on column bilibili_video.userid is 'up主userid';
 comment on column bilibili_video.av_title is '视频标题';
 comment on column bilibili_video.uptime is '发布时间';
+comment on column bilibili_video.bigtype is '大分类';
+comment on column bilibili_video.smalltype is '小分类';
+comment on column bilibili_video.tags is '标签';
+comment on column bilibili_video.description is '视频描述';
 comment on column bilibili_video.djnumber is '点击数';
 comment on column bilibili_video.dmnumber is '弹幕数';
 comment on column bilibili_video.coinnumber is '硬币数';
 comment on column bilibili_video.scnumber is '收藏数';
-comment on column bilibili_video.bigtype is '大分类';
-comment on column bilibili_video.smalltype is '小分类';
 comment on column bilibili_video.sharenumber is '分享数';
-comment on column bilibili_video.tags is '标签';
-comment on column bilibili_video.description is '视频描述';
+comment on column bilibili_video.commentnumber is '评论数';
+comment on column bilibili_video.hisrank is '最高日排名';
+
 
 --视频信息表自增序列
 create sequence video_seq increment by 1 start with 1 
@@ -122,6 +129,7 @@ minvalue 1 maxvalue 9999999999999 nocache
 order;
 
 
+--评论表
 create table bilibili_comment
 (id number(20) PRIMARY KEY,
 rpid number(20),
