@@ -57,25 +57,34 @@ create table bilibili_user
 (id number(20) PRIMARY KEY,
 userid number(20),
 username varchar2(20),
-regdate DATE,
-birthday varchar2(10),
+regtime DATE,
+birthday DATE,
 geo varchar2(50),
-videonumber number(20, 2),
-gznumber number(20, 2),
+sex varchar2(4),
 fansnumber number(20, 2),
-bfnumber number(20, 2)
+gznumber number(20, 2),
+bfnumber number(20, 2),
+videonumber number(20, 2),
+approve varchar2(5),
+userlevel number(3),
+sign varchar2(4000)
 );
 comment on table bilibili_user is '用户信息表';
 comment on column bilibili_user.id is '主键';
 comment on column bilibili_user.userid is '用户id';
 comment on column bilibili_user.username is '用户名';
-comment on column bilibili_user.regdate is '注册日期';
+comment on column bilibili_user.regtime is '注册日期';
 comment on column bilibili_user.birthday is '生日';
 comment on column bilibili_user.geo is '地区';
-comment on column bilibili_user.videonumber is '投稿视频数';
-comment on column bilibili_user.gznumber is '关注数';
+comment on column bilibili_user.sex is '性别';
 comment on column bilibili_user.fansnumber is '粉丝数';
+comment on column bilibili_user.gznumber is '关注数';
 comment on column bilibili_user.bfnumber is '播放数';
+comment on column bilibili_user.videonumber is '投稿视频数';
+comment on column bilibili_user.approve is '是否认证';
+comment on column bilibili_user.userlevel is '用户等级';
+comment on column bilibili_user.sign is '用户签名';
+
 
 --用户信息表自增序列
 create sequence user_seq increment by 1 start with 1 
