@@ -185,7 +185,7 @@ def main(number):
                                  desired_capabilities=dcap)
     try:
         driver.get(url)
-        time.sleep(random.uniform(1, 5))
+        # time.sleep(random.uniform(1, 5))
         content = driver.page_source  # 获取网页内容
         driver.close()
         driver.quit()
@@ -202,12 +202,12 @@ if __name__=='__main__':
     time1 = time.time()
 
     start = getMaxUid()  # 抓取范围
-    stop = start + 10000
+    stop = start + 100
     print(start, stop)
 
     try:
-        pool = Pool(processes=16)  # 设定并发进程的数量
-        pool.map(main, (i for i in range(start, stop + 1)))
+        pool = Pool(processes=10)  # 设定并发进程的数量
+        pool.map(main, (i for i in range(start+1, stop+1)))
     except Exception:
         pass
 

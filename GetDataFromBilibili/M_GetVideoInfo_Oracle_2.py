@@ -4,7 +4,7 @@
 """
 av号，up主userid，视频标题，发布时间，大分类，小分类，标签，视频描述，点击数，弹幕数，硬币数，收藏数，分享数，评论数，最高日排名
 """
-
+import random
 import urllib
 import urllib.request
 import urllib.parse
@@ -111,6 +111,8 @@ def saveData(avid, userid, title, uptime, bigtype, smalltype, truetagscontent, d
         print(avid)
         cur.close()
 
+        time.sleep(random.uniform(1, 3))  # 更据动态网页加载耗时，此处为随机时间
+
         # if avid%100 == 0:
         #     msg = '已抓取并导入'+str(avid)+'条视频信息'
         #     SendMessage.sendMessage('东京中央软体产业株式会社', msg)
@@ -182,8 +184,8 @@ if __name__=='__main__':
     print(start, stop)
 
     try:
-        pool = Pool(processes=20)  # 设定并发进程的数量
-        pool.map(main, (i for i in range(start, stop + 1)))
+        pool = Pool(processes=10)  # 设定并发进程的数量
+        pool.map(main, (i for i in range(start+1, stop+1)))
     except Exception:
         pass
 

@@ -4,6 +4,7 @@
 """
 UID，用户名，粉丝数，粉丝UID
 """
+import random
 
 from bs4 import BeautifulSoup
 from urllib.parse import urlencode
@@ -15,6 +16,7 @@ import cx_Oracle as cxo
 import requests
 import json
 import time
+import urllib.parse
 
 oracleHost = '127.0.0.1'
 oracleUser = 'bilibili'
@@ -32,7 +34,8 @@ def getInfo(soup):
         username = str(soup.find_all(attrs={'id': 'h-name'})[0].contents[0])
         return username
     except Exception:
-        print("get info error")
+        # print("get info error")
+        pass
 
 
 # 存入数据库
@@ -90,7 +93,8 @@ class GetFansUid(object):
             self._fans_ids = fans_ids + self._fans_ids
             return pages, fansnumber
         except RequestException:
-            return self._get_page(page_number)
+            # return self._get_page(page_number)
+            pass
 
     def get_uids(self):
         fansnumber = 0
@@ -104,16 +108,29 @@ class GetFansUid(object):
                     for i in range(2, 6):  #超过5页，暂且先爬取前五页
                         self._get_page(i)
         except Exception:
-            print(" get uid error")
+            # print(" get uid error")
+            pass
         finally:
             return self._fans_ids, fansnumber
 
 def main(number):
     url = 'http://space.bilibili.com/' + str(number) + '/#!/'
     try:
-        response = request.urlopen(url)
-        # print(response.getcode())
+        # response = request.urlopen(url)
+        # # print(response.getcode())
+        # html_cont = response.read()
+        data = {}
+        params = urllib.parse.urlencode(data).encode(encoding='UTF8')
+        req = urllib.request.Request("%s?%s" % (url, params))
+        headers = {
+            'User-Agent': "Mozilla/5.0 (Windows NT 10.0; WOW64)",
+            'Referer': 'http://www.bing.com/'
+        }
+        for i in headers:
+            req.add_header(i, headers[i])
+        response = urllib.request.urlopen(req)
         html_cont = response.read()
+
         soup = BeautifulSoup(html_cont, 'lxml', from_encoding='utf-8')
         username = soup.find("h1").get_text().strip()[:-6]  # 获取用户名
         uid = number  # number即为uid
@@ -121,6 +138,8 @@ def main(number):
         fansuid, fansnumber = get_fans_uid.get_uids()  # 获取粉丝id和粉丝数量
 
         saveData(uid, username, fansnumber, fansuid)  # 插入数据库
+
+        time.sleep(random.uniform(1, 5))  # 更据动态网页加载耗时，此处为随机时间
     except Exception:
         pass
 
@@ -133,8 +152,8 @@ if __name__ == '__main__':
     print(start, stop)
 
     try:
-        pool = Pool(processes=30)  # 设定并发进程的数量
-        pool.map(main, (i for i in range(start, stop+1)))
+        pool = Pool(processes=10)  # 设定并发进程的数量
+        pool.map(main, (i for i in range(start+1, stop+1)))
     except Exception:
         pass
 

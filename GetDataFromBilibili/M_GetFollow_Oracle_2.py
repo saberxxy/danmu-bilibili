@@ -4,6 +4,7 @@
 """
 UID，用户名，关注数，关注用户UID
 """
+import random
 
 from bs4 import BeautifulSoup
 from urllib.parse import urlencode
@@ -15,6 +16,7 @@ import cx_Oracle as cxo
 import requests
 import json
 import time
+import urllib.parse
 
 oracleHost = '127.0.0.1'
 oracleUser = 'bilibili'
@@ -33,7 +35,8 @@ def getInfo(soup):
         username = str(soup.find_all(attrs={'id': 'h-name'})[0].contents[0])
         return username
     except Exception:
-        print("get info error")
+        # print("get info error")
+        pass
 
 
 # 存入数据库
@@ -97,7 +100,8 @@ class GetFollowUid(object):
             # print(self._follow_ids)
             return pages, follownumber
         except RequestException:
-            return self._get_page(page_number)
+            # return self._get_page(page_number)
+            pass
 
     def get_uids(self):
         follownumber = 0
@@ -120,9 +124,21 @@ class GetFollowUid(object):
 def main(number):
     url = 'http://space.bilibili.com/'+str(number)+'/#!/'
     try:
-        response = request.urlopen(url)
-        # print(response.getcode())
+        # response = request.urlopen(url)
+        # # print(response.getcode())
+        # html_cont = response.read()
+        data = {}
+        params = urllib.parse.urlencode(data).encode(encoding='UTF8')
+        req = urllib.request.Request("%s?%s" % (url, params))
+        headers = {
+            'User-Agent': "Mozilla/5.0 (Windows NT 10.0; WOW64)",
+            'Referer': 'http://www.bing.com/'
+        }
+        for i in headers:
+            req.add_header(i, headers[i])
+        response = urllib.request.urlopen(req)
         html_cont = response.read()
+
         soup = BeautifulSoup(html_cont, 'lxml', from_encoding='utf-8')
         username = soup.find("h1").get_text().strip()[:-6]  # 获取用户名
         uid = number  # number即为uid
@@ -130,6 +146,10 @@ def main(number):
         gzsuid, gznumber = get_gz_uid.get_uids()  # 获取关注id和关注数量
 
         saveData(uid, username, gznumber, gzsuid)  # 插入数据库
+
+        # print(uid, username, gznumber, gzsuid)
+
+        time.sleep(random.uniform(1, 5))  # 更据动态网页加载耗时，此处为随机时间
     except Exception:
         pass
 
@@ -144,8 +164,8 @@ if __name__ == '__main__':
     print(start, stop)
 
     try:
-        pool = Pool(processes=60)  # 设定并发进程的数量
-        pool.map(main, (i for i in range(start, stop + 1)))
+        pool = Pool(processes=10)  # 设定并发进程的数量
+        pool.map(main, (i for i in range(start+1, stop+1)))
     except Exception:
         pass
 

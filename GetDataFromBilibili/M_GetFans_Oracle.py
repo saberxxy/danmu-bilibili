@@ -140,12 +140,12 @@ if __name__=='__main__':
     time1 = time.time()
 
     start = getMaxUid()  # 抓取范围
-    stop = start + 100
+    stop = start + 500
     print(start, stop)
 
     try:
         pool = Pool(processes=10)  # 设定并发进程的数量
-        pool.map(main, (i for i in range(start, stop+1)))
+        pool.map(main, (i for i in range(start+1, stop+1)))
     except Exception:
         pass
 

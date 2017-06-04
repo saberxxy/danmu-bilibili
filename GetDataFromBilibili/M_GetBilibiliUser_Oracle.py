@@ -15,6 +15,7 @@ import SendMessage
 from multiprocessing import Pool
 import time
 import random
+import os
 
 
 oracleHost = '127.0.0.1'
@@ -25,6 +26,20 @@ oracleDatabaseName = 'orcl'
 oracleConn = oracleUser + '/' + oraclePassword + '@' + oracleHost + '/' + oracleDatabaseName
 conn = cxo.connect(oracleConn)
 cursor = conn.cursor()
+
+dcap = dict(DesiredCapabilities.PHANTOMJS)
+dcap["phantomjs.page.settings.userAgent"] = (
+    "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0"
+)
+dcap["phantomjs.page.settings.resourceTimeout"] = 1000
+dcap["phantomjs.page.settings.loadImages"] = False  # 不加载图片，加快速度
+dcap["phantomjs.page.settings.disk-cache"] = True  # 启用缓存
+dcap["phantomjs.page.settings.userAgent"] = "faking it"
+dcap["phantomjs.page.settings.localToRemoteUrlAccessEnabled"] = False
+dcap["phantomjs.page.settings.ignore-ssl-errors"] = True
+# phantomjs.exe的路径G:\Anaconda3\phantomjs\bin
+driver = webdriver.PhantomJS(executable_path='G:\\Anaconda3\\phantomjs\\bin\\phantomjs.exe',
+                             desired_capabilities=dcap)
 
 
 # 提取信息
@@ -144,33 +159,19 @@ def getMaxUid():
 
 def main(number):
     url = 'http://space.bilibili.com/' + str(number) + '/#!/'
-    # "http://space.bilibili.com/1643718/#!/"
-    # "http://space.bilibili.com/902915/#!/"
-    # "http://space.bilibili.com/1/#!/"
-    dcap = dict(DesiredCapabilities.PHANTOMJS)
-    dcap["phantomjs.page.settings.userAgent"] = (
-        "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0"
-    )
-    dcap["phantomjs.page.settings.loadImages"] = False  # 不加载图片，加快速度
-    # phantomjs.exe的路径G:\Anaconda3\phantomjs\bin
-    driver = webdriver.PhantomJS(executable_path='G:\\Anaconda3\\phantomjs\\bin\\phantomjs.exe',
-                                 desired_capabilities=dcap)
     try:
         driver.get(url)
-        time.sleep(random.uniform(1, 5))  # 更据动态网页加载耗时，此处为随机时间
+        # time.sleep(random.uniform(1, 5))  # 更据动态网页加载耗时，此处为随机时间
         content = driver.page_source  # 获取网页内容
         # print(content)
         # driver.close()
-        driver.close()
-        driver.quit()  # 仅仅close不能解决问题，要使用quit，避免因phantomjs造成内存泄露
+        # driver.close()
+        # driver.quit()  # 仅仅close不能解决问题，要使用quit，避免因phantomjs造成内存泄露
         soup = BeautifulSoup(content, 'lxml')
         getInfo(soup)
         # print(int(soup.find_all(attrs={'class': 'item uid'})[0].find_all(attrs={'class': 'text'})[0].contents[0]))
     except Exception:
         pass
-    finally:
-        if driver:
-            driver.quit()
 
 
 
@@ -178,17 +179,24 @@ if __name__=='__main__':
     time1 = time.time()
 
     start = getMaxUid()  # 抓取范围
-    stop = start + 10000
+    stop = start + 100
     print(start, stop)
 
     try:
-        pool = Pool(processes=16)  # 设定并发进程的数量
-        pool.map(main, (i for i in range(start, stop+1)))
+        pool = Pool(processes=10)  # 设定并发进程的数量
+        pool.map(main, (i for i in range(start+1, stop+1)))
     except Exception:
         pass
 
+    command = 'taskkill /f /t /im phantomjs.exe'
+    os.system(command)  # 杀掉phantomjs进程
+
     time2 = time.time()
     print((time2 - time1) / 60, u"分钟")
+
+
+
+
 
 
 
