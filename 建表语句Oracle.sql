@@ -209,3 +209,25 @@ comment on column bilibili_usergz.gzsuserid is '关注用户id';
 create sequence usergz_seq increment by 1 start with 1 
 minvalue 1 maxvalue 9999999999999 nocache 
 order;
+
+
+
+--用户投稿表
+create table bilibili_usertg
+(id number(20) PRIMARY KEY,
+userid number(20),
+username varchar2(50),
+tgnumber number(20),
+tgavid varchar2(4000));
+
+comment on table bilibili_usertg is '用户投稿表';
+comment on column bilibili_usertg.id is '主键';
+comment on column bilibili_usertg.userid is '用户id';
+comment on column bilibili_usertg.username is '用户名';
+comment on column bilibili_usertg.tgnumber is '投稿数量';
+comment on column bilibili_usertg.tgavid is '投稿视频的av号';
+
+--自增序列
+create sequence usertg_seq increment by 1 start with 1 
+minvalue 1 maxvalue 9999999999999 nocache 
+order;
