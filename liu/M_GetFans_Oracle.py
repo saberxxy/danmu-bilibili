@@ -24,16 +24,6 @@ oracleConn = oracleUser + '/' + oraclePassword + '@' + oracleHost + '/' + oracle
 conn = cxo.connect(oracleConn)
 cur = conn.cursor()
 
-# 提取信息
-def getInfo(soup):
-
-    try:
-        # 用户名
-        username = str(soup.find_all(attrs={'id': 'h-name'})[0].contents[0])
-        return username
-    except Exception:
-        print("get info error")
-
 
 # 存入数据库
 def saveData(uid, username, fansnumber, fansuserid):
@@ -108,20 +98,41 @@ class GetFansUid(object):
         finally:
             return self._fans_ids, fansnumber
 
+
 def main(number):
-    url = 'http://space.bilibili.com/' + str(number) + '/#!/'
     try:
-        response = request.urlopen(url)
-        # print(response.getcode())
-        html_cont = response.read()
-        soup = BeautifulSoup(html_cont, 'lxml', from_encoding='utf-8')
-        username = soup.find("h1").get_text().strip()[:-6]  # 获取用户名
+        url = 'http://space.bilibili.com/ajax/member/GetInfo'
+        data = {
+            'mid': '{}'.format(number),
+            'csrf': ''
+        }
+        headers = {
+            'Accept': 'application/json, text/plain, */*',
+            'Accept-Encoding': 'gzip, deflate',
+            'Accept-Language': 'zh-CN,zh;q=0.8',
+            'Connection': 'keep-alive',
+            'Content-Length': '32',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Cookie': 'UM_distinctid=15b9449b43c1-04dfdd66b40759-51462d15-1fa400-15b9449b43d83; fts=1492841510; sid=j4j61vah; purl_token=bilibili_1492841536; buvid3=30EA0852-5019-462F-B54B-1FA471AC832F28080infoc; rpdid=iwskokplxkdopliqpoxpw; _cnt_pm=0; _cnt_notify=0; _qddaz=QD.cbvorb.47xm5.j1t4z5yc; pgv_pvi=9558976512; pgv_si=s2784223232; _dfcaptcha=02d046fd3cc2bfd2ce6724f8b2185887; CNZZDATA2724999=cnzz_eid%3D1176255236-1492841785-http%253A%252F%252Fspace.bilibili.com%252F%26ntime%3D1492857985',
+            'Host': 'space.bilibili.com',
+            'Origin': 'http://space.bilibili.com',
+            'Referer': 'http://space.bilibili.com/{}/'.format(number),
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.81 Safari/537.36',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+
+        r = requests.post(url, headers=headers, data=data)
+        # print(r)
+        userdata = json.loads(r.text)
+        username = userdata.get('data').get('name')  # 获取用户名
         uid = number  # number即为uid
         get_fans_uid = GetFansUid(number)
         fansuid, fansnumber = get_fans_uid.get_uids()  # 获取粉丝id和粉丝数量
+        fansuid = fansuid.strip()[:-1]  # 去掉末尾逗号
 
         saveData(uid, username, fansnumber, fansuid)  # 插入数据库
     except Exception:
+        print("error at userid: ", number)
         pass
 
 
